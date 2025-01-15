@@ -1,18 +1,17 @@
 import { Text, View } from "react-native";
 import { Link } from "expo-router";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Login from "./login";
+import Register from "./register";
+import { NavigationContainer } from "@react-navigation/native";
+
+const Stack = createNativeStackNavigator();
 
 export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text className="font-bold my-10 font-rubik text-3xl">Welcome to ChatApp</Text>
-      <Link href="/signin">Sign In</Link>
-      <Link href="/login">Log in</Link>
-    </View>
-  );
+return (
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+      </Stack.Navigator>
+);
 }
