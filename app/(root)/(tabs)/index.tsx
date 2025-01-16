@@ -1,9 +1,7 @@
-import { Text, View } from "react-native";
-import { Link } from "expo-router";
+import React from 'react'
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./login";
 import Register from "./register";
-import { NavigationContainer } from "@react-navigation/native";
 
 const Stack = createNativeStackNavigator();
 
