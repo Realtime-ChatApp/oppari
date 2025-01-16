@@ -1,9 +1,11 @@
-// Import the functions you need from the SDKs you need
+// Import the functions you need from the SDKs
 import { initializeApp } from "firebase/app";
-import { getAuth, connectAuthEmulator, initializeAuth, browserLocalPersistence, setPersistence } from "firebase/auth";
+import { getAuth, initializeAuth, connectAuthEmulator, setPersistence, getReactNativePersistence } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Platform } from "react-native";
 
+// Environment variables
 import {
   FIREBASE_API_KEY,
   FIREBASE_AUTH_DOMAIN,
@@ -12,10 +14,9 @@ import {
   FIREBASE_MESSAGING_SENDER_ID,
   FIREBASE_APP_ID,
   FIREBASE_MEASUREMENT_ID,
-} from '@env';
+} from "@env";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// Firebase configuration
 const firebaseConfig = {
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
@@ -26,22 +27,19 @@ const firebaseConfig = {
   measurementId: FIREBASE_MEASUREMENT_ID,
 };
 
-console.log(FIREBASE_API_KEY)
-// Initialize Firebase
-export const FIREBASE_APP = initializeApp(firebaseConfig);
-export const FIREBASE_AUTH = initializeAuth(FIREBASE_APP);
-export const FIREBASE_DB = getFirestore(FIREBASE_APP);
+// Initialize Firebase App
+const FIREBASE_APP = initializeApp(firebaseConfig);
+const FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
+  persistence: getReactNativePersistence(AsyncStorage), // Correct persistence setup for React Native
+});
 
-setPersistence(FIREBASE_AUTH, browserLocalPersistence)
-  .then(() => {
-    console.log("Firebase Auth persistence set to AsyncStorage.");
-  })
-  .catch((error) => {
-    console.error("Error setting persistence:", error);
-  });
+// Initialize Firestore
+const FIREBASE_DB = getFirestore(FIREBASE_APP);
 
-// Connect to emulators
-connectAuthEmulator(FIREBASE_AUTH, "http://127.0.0.1:9099");
-connectFirestoreEmulator(FIREBASE_DB, "http://127.0.0.1", 8080);
+// Connect to Firebase emulators
+if (__DEV__) {
+  connectAuthEmulator(FIREBASE_AUTH, "http://192.168.1.102:9099");
+  connectFirestoreEmulator(FIREBASE_DB, "192.168.1.102", 8080);
+}
 
-export default { FIREBASE_APP, FIREBASE_AUTH, FIREBASE_DB };
+export { FIREBASE_APP, FIREBASE_AUTH, FIREBASE_DB };
